@@ -1,0 +1,74 @@
+<div class="row justify-content-center">
+
+    <form [formGroup]="dynamicForm" class="col-md-10" (ngSubmit)="onSubmit()">
+      
+      <div class="row" >
+        <div class="col-md-2">
+          <label for="invoiceNumberInput">Invoice Number</label>
+          <input type="text" class="form-control" NoWhitespace="true" formControlName="invoiceNumber" required>  
+          <span *ngIf="dynamicForm.controls.invoiceNumber.errors && dynamicForm.controls.invoiceNumber.errors.pattern" style="color: red;">Must be only letters</span>
+        </div>  
+        <div class="col-md-2">
+          <label for="netInput">Net</label>
+          <input type="text" OnlyNumber="true" class="form-control" formControlName="net" required>
+        </div>
+        <div class="col-md-2">
+          <label for="taxPercentageInput">% Tax</label>
+          <select formControlName="taxPercentage" class="form-control" placeholder="Select Tax %" [value]='taxPercentageValues[0]'>
+            <option *ngFor="let tax of taxPercentageValues; let i = index" [value]="taxPercentageValues[i]">
+              {{tax}}
+            </option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label for="totalInput">Total</label>
+          <div class="form-control bg-light">
+            <span>{{dynamicForm.value.net * ( 1 + (dynamicForm.value.taxPercentage/100))}}</span>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <button class="button w-100 button add" [disabled]="dynamicForm.invalid" type="submit">Add</button>
+        </div>
+        <div class="col-md-2">
+          <button class="button w-100 button remove" type="reset" onReset="onReset()">Clear</button>
+        </div>        
+      </div>   
+    
+    </form>
+</div>
+<br />
+<div class="row justify-content-center">
+  <div class="col-md-10">
+      <table class="table table-striped">
+          {{invoiceData}}
+        <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Invoice Number</th>
+          <th scope="col">Net</th>
+          <th scope="col">% Tax</th>
+          <th scope="col">Tax</th>
+          <th scope="col">Total</th>
+          <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let invoice of invoices; index as i">
+          <th scope="row">{{ i + 1 }}</th>
+          <td>{{ invoice.invoiceNumber }}</td>
+          <td>{{ invoice.net | currency:'$':'symbol':'4.2-2' }}</td>
+          <td>{{ invoice.taxPercentage / 100 | percent:'2.2' }}</td>
+          <td>{{ (invoice.net * (1 + (invoice.taxPercentage/100))) - invoice.net | number : '1.2-2' }}</td>
+          <td>{{ invoice.net * (1 + (invoice.taxPercentage/100)) | number : '1.2-2'}}</td>
+          <td><button type="button" class="btn btn-danger w-50" (click)="remove(invoice.id)">Remove</button></td>
+        </tr>
+        </tbody>
+      </table>      
+  </div>
+</div>
+<div class="row justify-content-center">
+  <div class="col-md-8"></div>
+  <div class="col-md-2">
+    <button type="button" class="btn btn-primary w-100" (click)="processAndContinue()">Process and Continue</button>
+  </div>
+</div>

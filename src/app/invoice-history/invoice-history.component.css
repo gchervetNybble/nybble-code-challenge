@@ -1,0 +1,16 @@
+.nav-button-go-back {
+    border: 1px solid lightgray;
+    background-color: white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    color: lightgray;
+    font-size: 20px;
+    padding: 2px 11px;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+.nav-button-go-back:hover {
+    background-color: lightgray;
+    color: white;
+}
