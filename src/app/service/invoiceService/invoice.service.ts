@@ -50,12 +50,12 @@ export class InvoiceService {
       actualInvoiceData = this.getAll();
     }
 
-    const indexToRemove = invoiceData.findIndex(x => x.id === id);
+    const indexToRemove = actualInvoiceData.findIndex(x => x.id === id);
     if (indexToRemove !== -1) {
-      let removed = invoiceData.splice(indexToRemove, 1);
+      let removed = actualInvoiceData.splice(indexToRemove, 1);
     }
 
-    this.processData(invoiceData, removeFromHistory);
+    this.processData(actualInvoiceData, removeFromHistory);
   }
 
   removeAll() {
