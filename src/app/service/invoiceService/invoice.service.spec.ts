@@ -32,21 +32,20 @@ describe('InvoiceService', () => {
 
   beforeEach(() => {
     service = new InvoiceService();
-
     let store = {};
     const mockLocalStorage = {
-        getItem: (key: string): string => {
+      getItem: (key: string): string => {
         return key in store ? store[key] : null;
-        },
-        setItem: (key: string, value: string) => {
+      },
+      setItem: (key: string, value: string) => {
         store[key] = `${value}`;
-        },
-        removeItem: (key: string) => {
+      },
+      removeItem: (key: string) => {
         delete store[key];
-        },
-        clear: () => {
+      },
+      clear: () => {
         store = {};
-        }
+      }
     };
 
     // This basically means: whenever localStorage.getItem is called,
@@ -56,6 +55,14 @@ describe('InvoiceService', () => {
     spyOn(localStorage, 'removeItem').and.callFake(mockLocalStorage.removeItem);
     spyOn(localStorage, 'clear').and.callFake(mockLocalStorage.clear);
 
+  });
+
+  beforeEach(() => {
+    jasmine.clock().install();
+  });
+
+  afterEach(() => {
+    jasmine.clock().uninstall();
   });
 
   it('should be created', () => {
@@ -79,8 +86,40 @@ describe('InvoiceService', () => {
     () => {
       service.add(invoiceMock);
       const dailyInvoices = service.getDaily();
-      debugger;
       service.remove(dailyInvoices[0].id);
+      expect(service.getDaily()).toEqual([]);
+  });
+
+  it('should merge all data in local storage, daily and history',
+    () => {
+      service.add(invoiceMock);
+      localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(invoiceData));
+      service.mergeData();
+
+      invoiceMock.id = 9;
+      invoiceData.push(invoiceMock);
+      jasmine.clock().tick(10000);
+
+      expect(service.getAll()).toEqual(invoiceData);
+  });
+
+  it('should clean daily local storage after merging daily and history',
+    () => {
+      service.add(invoiceMock);
+      localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(invoiceData));
+      invoiceData.push(invoiceMock);
+
+      service.mergeData();
+      expect(service.getDaily()).toEqual([]);
+  });
+
+  it('should clean daily local storage after merging daily and history',
+    () => {
+      service.processData(invoiceMock);
+      localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(invoiceData));
+      invoiceData.push(invoiceMock);
+
+      service.mergeData();
       expect(service.getDaily()).toEqual([]);
   });
 
