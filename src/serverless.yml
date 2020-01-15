@@ -18,15 +18,7 @@ package:
 
 functions:
   issues:
-    handler: src/handlers/issues.handler
-    path: issues.handler
-    events:
-      - http: true
-        x-azure-settings:
-          authLevel: anonymous
-  pulls:
-    handler: src/handlers/pulls.handler
-    path: pulls.handler
+    invoices: src/handlers/invoices.handler
     events:
       - http: true
         x-azure-settings:
